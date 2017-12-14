@@ -1,10 +1,8 @@
 {
-  "name": "sample2",
+  "name": "angular-oauth2-oidc-sample",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "tsc": "tsc",
-    "ng": "ng",
     "start": "ng serve --preserve-symlinks",
     "build": "ng build",
     "test": "ng test",
