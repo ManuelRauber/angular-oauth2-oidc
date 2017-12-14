@@ -273,12 +273,8 @@ If you use the ``PathLocationStragegy`` (which is on by default) and have a gene
 See the [documentation](https://manfredsteyer.github.io/angular-oauth2-oidc/angular-oauth2-oidc/docs/) for more information about this library.
 
 
+## Local development
 
-
-
-
-
-
-
-
-
+For local development, you can use the [sample](sample) provided.
+Be sure to build the library at first (`cd angular-oauth2-oidc && npm run build`) and then link it into the sample via `cd sample && npm run link`.
+After that, you can start the sample via `cd sample && npm start`, and point your browser to [http://localhost:4200](http://localhost:4200).
