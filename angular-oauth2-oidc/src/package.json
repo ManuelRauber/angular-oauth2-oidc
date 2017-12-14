@@ -10,7 +10,14 @@
     "email": "manfred.steyer@gmx.net"
   },
   "keywords": [
-    "angular"
+    "angular",
+    "oauth2",
+    "oidc",
+    "password",
+    "implicit",
+    "token",
+    "keycloak",
+    "identity server"
   ],
   "license": "MIT",
   "bugs": {
