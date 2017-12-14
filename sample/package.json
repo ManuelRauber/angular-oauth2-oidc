@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "link": "echo \"Do not forget to build the library before linking...\" && npm link ../angular-oauth2-oidc/dist"
+    "link": "echo \"Do not forget to build the library before linking...\" && npm link ../angular-oauth2-oidc/dist --production"
   },
   "private": true,
   "dependencies": {

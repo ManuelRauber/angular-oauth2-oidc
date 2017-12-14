@@ -20,7 +20,7 @@
       true,
       140
     ],
-    "member-access": false,
+    "member-access": [true, "no-public"],
     "member-ordering": [
       true,
       "static-before-instance",
@@ -37,6 +37,7 @@
       "trace"
     ],
     "no-construct": true,
+    "prefer-const": true,
     "no-debugger": true,
     "no-duplicate-variable": true,
     "no-empty": false,
@@ -51,6 +52,7 @@
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
+    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
     "one-line": [
       false,
       "check-open-brace",

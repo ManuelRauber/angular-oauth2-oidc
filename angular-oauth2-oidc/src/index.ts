@@ -1,21 +1,16 @@
-import {OAuthStorage} from './types';
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import './rxjsImports';
+
 import { CommonModule } from '@angular/common';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ModuleWithProviders, NgModule } from '@angular/core';
+
+import { DefaultOAuthInterceptor } from './interceptors/default-oauth.interceptor';
+import { OAuthNoopResourceServerErrorHandler, OAuthResourceServerErrorHandler } from './interceptors/resource-server-error-handler';
+import { OAuthModuleConfig } from './oauth-module.config';
 
 import { OAuthService } from './oauth-service';
+import { OAuthStorage } from './types';
 import { UrlHelperService } from './url-helper.service';
-
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/publish';
-
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/race';
 
 export * from './oauth-service';
 export * from './token-validation/jwks-validation-handler';
@@ -30,42 +25,30 @@ export * from './interceptors/default-oauth.interceptor';
 export * from './interceptors/resource-server-error-handler';
 export * from './oauth-module.config';
 
-import { OAuthModuleConfig } from "./oauth-module.config";
-import { OAuthResourceServerErrorHandler, OAuthNoopResourceServerErrorHandler } from "./interceptors/resource-server-error-handler";
-import { DefaultOAuthInterceptor } from "./interceptors/default-oauth.interceptor";
-
-export function createDefaultStorage() { 
-  return (typeof sessionStorage !== 'undefined') ? sessionStorage : null;
+export function createDefaultStorage() {
+    return (typeof sessionStorage !== 'undefined') ? sessionStorage : null;
 }
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [
-  ],
-  exports: [
-  ]
+    imports: [
+        CommonModule,
+    ],
 })
 export class OAuthModule {
+    static forRoot(config: OAuthModuleConfig = null): ModuleWithProviders {
+        return {
+            ngModule: OAuthModule,
+            providers: [
+                OAuthService,
+                UrlHelperService,
+                { provide: OAuthStorage, useFactory: createDefaultStorage },
+                { provide: OAuthResourceServerErrorHandler, useClass: OAuthNoopResourceServerErrorHandler },
+                { provide: OAuthModuleConfig, useValue: config },
+                { provide: HTTP_INTERCEPTORS, useClass: DefaultOAuthInterceptor, multi: true },
+            ],
 
-  static forRoot(config: OAuthModuleConfig = null): ModuleWithProviders {
-
-    //const setupInterceptor = config && config.resourceServer && config.resourceServer.allowedUrls;
-    
-    return {
-      ngModule: OAuthModule,
-      providers: [
-        OAuthService,
-        UrlHelperService,
-        { provide: OAuthStorage, useFactory: createDefaultStorage  },
-        { provide: OAuthResourceServerErrorHandler, useClass: OAuthNoopResourceServerErrorHandler},
-        { provide: OAuthModuleConfig, useValue: config},
-        { provide: HTTP_INTERCEPTORS, useClass: DefaultOAuthInterceptor, multi: true}
-      ]
-
-    };
-  }
+        };
+    }
 }
 
 

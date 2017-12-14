@@ -29,7 +29,7 @@ export class LoginOptions {
      * A custom hash fragment to be used instead of the
      * actual one. This is used for silent refreshes, to
      * pass the iframes hash fragment to this method.
-    */
+     */
     customHashFragment?: string;
 
     /**
@@ -51,7 +51,9 @@ export class LoginOptions {
  */
 export abstract class OAuthStorage {
     abstract getItem(key: string): string | null;
+
     abstract removeItem(key: string): void;
+
     abstract setItem(key: string, data: string): void;
 }
 
@@ -97,6 +99,7 @@ export interface TokenResponse {
  */
 export interface UserInfo {
     sub: string;
+
     [key: string]: any;
 }
 

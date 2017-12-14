@@ -12,52 +12,49 @@ export interface ValidationParams {
  * validate tokens.
  */
 export abstract class ValidationHandler {
-
     /**
      * Validates the signature of an id_token.
      */
-    public abstract validateSignature(validationParams: ValidationParams): Promise<any>;
+    abstract validateSignature(validationParams: ValidationParams): Promise<any>;
 
     /**
      * Validates the at_hash in an id_token against the received access_token.
      */
-    public abstract  validateAtHash(validationParams: ValidationParams): boolean;
+    abstract validateAtHash(validationParams: ValidationParams): boolean;
 }
 
 /**
  * This abstract implementation of ValidationHandler already implements
  * the method validateAtHash. However, to make use of it,
  * you have to override the method calcHash.
-*/
+ */
 export abstract class AbstractValidationHandler implements ValidationHandler {
-
     /**
      * Validates the signature of an id_token.
-    */
+     */
     abstract validateSignature(validationParams: ValidationParams): Promise<any>;
 
     /**
      * Validates the at_hash in an id_token against the received access_token.
      */
     validateAtHash(params: ValidationParams): boolean {
+        const hashAlg = this.inferHashAlgorithm(params.idTokenHeader);
 
-        let hashAlg = this.inferHashAlgorithm(params.idTokenHeader);
+        const tokenHash = this.calcHash(params.accessToken, hashAlg); // sha256(accessToken, { asString: true });
 
-        let tokenHash = this.calcHash(params.accessToken, hashAlg); // sha256(accessToken, { asString: true });
+        const leftMostHalf = tokenHash.substr(0, tokenHash.length / 2);
 
-        let leftMostHalf = tokenHash.substr(0, tokenHash.length / 2 );
+        const tokenHashBase64 = btoa(leftMostHalf);
 
-        let tokenHashBase64 = btoa(leftMostHalf);
-
-        let atHash = tokenHashBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-        let claimsAtHash = params.idTokenClaims['at_hash'].replace(/=/g, '');
+        const atHash = tokenHashBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        const claimsAtHash = params.idTokenClaims['at_hash'].replace(/=/g, '');
 
         if (atHash !== claimsAtHash) {
             console.error('exptected at_hash: ' + atHash);
             console.error('actual at_hash: ' + claimsAtHash);
         }
 
-        return (atHash === claimsAtHash);
+        return atHash === claimsAtHash;
     }
 
     /**
@@ -67,11 +64,9 @@ export abstract class AbstractValidationHandler implements ValidationHandler {
      * @param jwtHeader the id_token's parsed header
      */
     protected inferHashAlgorithm(jwtHeader: object): string {
-        let alg: string = jwtHeader['alg'];
+        const alg: string = jwtHeader['alg'];
 
-        if (!alg.match(/^.S[0-9]{3}$/)) {
-            throw new Error('Algorithm not supported: ' + alg);
-        }
+        if (!alg.match(/^.S[0-9]{3}$/)) throw new Error('Algorithm not supported: ' + alg);
 
         return 'sha' + alg.substr(2);
     }
